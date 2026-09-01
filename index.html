@@ -337,8 +337,9 @@ body.locked {
 
 .image-frame img {
   width:100%;
-  height:100%;
-  object-fit:cover;
+  height:auto;
+  position:relative;
+  z-index:1;
   display:block;
   transition:transform 1.2s cubic-bezier(.2,.7,.2,1);
 }
@@ -350,6 +351,7 @@ body.locked {
 .image-placeholder {
   position:absolute;
   inset:0;
+  z-index:0;
   display:flex;
   align-items:center;
   justify-content:center;
