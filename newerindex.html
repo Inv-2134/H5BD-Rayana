@@ -251,7 +251,7 @@ body.locked {
   align-items: center;
   position: relative;
   z-index: 5;
-  padding: 110px 0;
+  padding: min(110px, 10vh) 0;
 }
 
 .chapter.reverse .copy {
@@ -317,11 +317,12 @@ body.locked {
   justify-content: center;
 }
 
-/* Chapters 1-19 frame (640x1024 native ratio) */
+/* Chapters 1-19 frame (640x1024 native ratio, bounded by height to prevent vertical overflow) */
 .image-frame {
   position: relative;
   width: 100%;
-  max-width: 600px; /* ENLARGED FOR IMMERSION */
+  max-width: min(600px, 45vh);
+  margin: auto;
   aspect-ratio: 640 / 1024;
   border-radius: 24px;
   overflow: hidden;
@@ -340,7 +341,7 @@ body.locked {
   object-fit: cover;
   display: block;
   transition: transform 1.2s cubic-bezier(.2,.7,.2,1);
-  will-change: transform; 
+  will-change: transform;
 }
 
 .chapter:hover .image-frame img {
@@ -446,7 +447,7 @@ body.locked {
 .c20 .chapter-inner {
   display: block;
   width: min(1500px, 94vw);
-  padding-top: 130px;
+  padding-top: min(130px, 12vh);
 }
 
 .c20 .copy {
@@ -485,10 +486,11 @@ body.locked {
   display: block;
 }
 
-/* Chapter 20 panoramic frame (1672x940 native ratio) */
+/* Chapter 20 panoramic frame (1672x940 native ratio, bounded by height) */
 .c20 .image-frame {
-  max-width: 100%;
   width: 100%;
+  max-width: min(1300px, 80vh);
+  margin: auto;
   aspect-ratio: 1672 / 940;
 }
 
@@ -649,11 +651,10 @@ body.locked {
   .chapter-inner,
   .chapter.reverse .chapter-inner {
     grid-template-columns: 1fr;
-    gap: 45px;
-    padding: 100px 0 70px;
+    gap: min(40px, 4vh);
+    padding: min(90px, 10vh) 0 min(60px, 8vh);
   }
 
-  /* Reset order so text is always first on mobile for reading continuity */
   .chapter.reverse .copy,
   .chapter.reverse .visual {
     order: initial;
@@ -676,7 +677,7 @@ body.locked {
   }
 
   .image-frame {
-    max-width: 500px; /* ENLARGED ON MOBILE FOR IMMERSION */
+    max-width: min(500px, 36vh);
     border-radius: 18px;
   }
 
@@ -1313,7 +1314,7 @@ function enterRealm() {
 
 // 4. Final Restart Action
 function returnToStart() {
-  document.body.classList.add("locked"); // Re-lock scroll for intro experience
+  document.body.classList.add("locked");
   introSection.scrollIntoView({ behavior: "smooth" });
 }
 
@@ -1331,7 +1332,6 @@ const revealObserver = new IntersectionObserver(
   { threshold: 0.15 }
 );
 document.querySelectorAll(".reveal").forEach(el => revealObserver.observe(el));
-
 
 /* ==========================================
    ACTIVE CHAPTER & DOT HIGHLIGHTING
@@ -1368,7 +1368,6 @@ const introObserver = new IntersectionObserver(
 );
 introObserver.observe(introSection);
 
-
 /* ==========================================
    PERFORMANCE-OPTIMIZED SCROLL LOOP
 ========================================== */
@@ -1384,20 +1383,17 @@ window.addEventListener("scroll", () => {
 }, { passive: true });
 
 function handleScrollEffects() {
-  // A. Progress Bar
   const scrollTop = window.scrollY;
   const height = document.documentElement.scrollHeight - window.innerHeight;
   const percentage = Math.min(100, Math.max(0, (scrollTop / height) * 100));
   progress.style.width = percentage + "%";
 
-  // B. Parallax Image Logic
   const viewport = window.innerHeight;
   document.querySelectorAll(".image-frame").forEach(frame => {
     const rect = frame.getBoundingClientRect();
     const center = rect.top + rect.height / 2;
     const distance = (center - viewport / 2) / viewport;
     
-    // Only calculate parallax for frames actively in viewport
     if(Math.abs(distance) < 1.2) {
       const image = frame.querySelector("img");
       if(image) {
@@ -1406,7 +1402,6 @@ function handleScrollEffects() {
     }
   });
 }
-
 
 /* ==========================================
    KEYBOARD NAVIGATION
@@ -1440,7 +1435,6 @@ document.addEventListener("keydown", event => {
   }
 });
 
-
 /* ==========================================
    CSS-DRIVEN PARTICLE & STAR GENERATORS
 ========================================== */
@@ -1464,25 +1458,19 @@ createStars("stars-11", 100);
 createStars("birthday-stars", 130);
 createStars("final-stars", 120);
 
-// Converted JS animations to CSS Keyframes for better mobile performance
 function createParticles(section, amount = 18) {
   for(let i = 0; i < amount; i++) {
     const particle = document.createElement("span");
     particle.className = "particle";
     
-    // Randomize dimensions
     const size = Math.random() * 4 + 2 + "px";
     particle.style.width = size;
     particle.style.height = size;
     
-    // Randomize placement
     particle.style.left = Math.random() * 100 + "%";
     particle.style.top = Math.random() * 100 + "%";
     
-    // Pass CSS variables for the keyframe to use
     particle.style.setProperty('--move-y', `-${30 + Math.random() * 70}px`);
-    
-    // Randomize animation timing
     particle.style.animationDuration = 5000 + Math.random() * 6000 + "ms";
     particle.style.animationDelay = Math.random() * 5000 + "ms";
 
